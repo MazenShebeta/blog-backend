@@ -2,10 +2,10 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const authRouter = require("./routes/auth");
-const userRouter = require("./routes/users");
-// const postRouter = require("./routes/posts");
-// const categoryRouter = require("./routes/categories");
+const authRouter = require("./routes/authRouter");
+const userRouter = require("./routes/usersRouter");
+const postRouter = require("./routes/postsRouter");
+const categoryRouter = require("./routes/categoriesRouter");
 
 dotenv.config();
 app.use(express.json());
@@ -22,8 +22,8 @@ mongoose
 
   app.use("/api/auth", authRouter);
   app.use("/api/users", userRouter);
-  // app.use("/api/posts", postRouter);
-  // app.use("/api/categories", categoryRouter);
+  app.use("/api/posts", postRouter);
+  app.use("/api/categories", categoryRouter);
 
 app.listen(8000, () => {
   console.log("Backend server is running!");
