@@ -1,14 +1,15 @@
 const router = require("express").Router();
-const User = require("../controllers/usersController");
+const Auth = require("../controllers/authController");
 
 // Register
 router.post("/register", async (req, res) => {
-  User.Register;
+  console.log("register");
+  Auth.register(req, res);
 });
 
 // Login
 router.post("/login", async (req, res) => {
-  User.Login;
+  Auth.login(req, res);
 });
 
 module.exports = router;
