@@ -3,7 +3,6 @@ const Auth = require("../controllers/authController");
 
 // Register
 router.post("/register", async (req, res) => {
-  console.log("register");
   Auth.register(req, res);
 });
 
