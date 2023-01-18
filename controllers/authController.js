@@ -10,7 +10,7 @@ class auth {
       const user = new User({
         username: req.body.username,
         email: req.body.email,
-        password: hashedPassword
+        password: hashedPassword,
       });
       const savedUser = await user.save();
       res.status(200).json(savedUser);
@@ -23,20 +23,24 @@ class auth {
   static async login(req, res) {
     try {
       const user = await User.findOne({
-        email: req.body.email,
+        username: req.body.username,
       });
-      !user && res.status(404).json("User not found");
-
-      // match passwords
-      const validPassword = await bcrypt.compare(
-        req.body.password,
-        user.password
-      );
-      !validPassword && res.status(400).json("Wrong password");
-
-      // send user info without password
-      const { password, ...others } = user._doc;
-      res.status(200).json(others);
+      if (user) {
+        // match passwords
+        const validPassword = await bcrypt.compare(
+          req.body.password,
+          user.password
+        );
+        if (validPassword) {
+          // send user info without password
+          const { password, ...others } = user._doc;
+          res.status(200).json(others);
+        } else {
+          !validPassword && res.status(400).json("Wrong password");
+        }
+      } else {
+        res.status(404).json("User not found");
+      }
     } catch (err) {
       res.status(500).json(err);
     }
