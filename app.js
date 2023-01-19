@@ -18,7 +18,7 @@ app.use(cors());
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
   .then(console.log("Connected to MongoDB"))
   .catch((err) => console.log(err));
@@ -37,15 +37,25 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   res.status(200).json("File has been uploaded");
 });
 
-app.use("/images", express.static(path.join(__dirname, "/images")));
+const printNames = (req, res, next) => {
+  // files in image folder
+  const fs = require("fs");
+  const files = fs.readdirSync("./images");
+  console.log(files);
+};
+
+app.use("/images", printNames, express.static(path.join(__dirname, "/images")));
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/categories", categoryRouter);
 
-
 app.use("/", (req, res) => {
-  res.status(200).json("Welcome to Blogarista-API, please refere to the documentation for more information");
+  res
+    .status(200)
+    .json(
+      "Welcome to Blogarista-API, please refere to the documentation for more information"
+    );
 });
 
 app.listen(8000, () => {
