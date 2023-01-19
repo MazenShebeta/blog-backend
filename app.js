@@ -8,6 +8,7 @@ const postRouter = require("./routes/postsRouter");
 const categoryRouter = require("./routes/categoriesRouter");
 const multer = require("multer");
 const cors = require("cors");
+const path = require("path");
 
 dotenv.config();
 app.use(express.json());
@@ -17,9 +18,7 @@ app.use(cors());
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
-    // useCreateIndex: true,
-    // useFindAndModify: true,
+    useUnifiedTopology: true
   })
   .then(console.log("Connected to MongoDB"))
   .catch((err) => console.log(err));
@@ -38,6 +37,7 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   res.status(200).json("File has been uploaded");
 });
 
+app.use("/images", express.static(path.join(__dirname, "/images")));
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/posts", postRouter);
