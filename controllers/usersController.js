@@ -5,6 +5,7 @@ class users {
   //  update
   static async update(req, res) {
     if (req.body.userID === req.params.id) {
+      console.log(req.body)
       if (req.body.password) {
         const salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password, salt);
@@ -30,6 +31,7 @@ class users {
   // Delete
   static async delete(req, res) {
     try {
+      console.log(req.body)
       if (req.body.userID === req.params.id) {
         try {
           await User.findByIdAndDelete(req.params.id);
