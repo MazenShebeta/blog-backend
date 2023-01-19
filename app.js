@@ -43,6 +43,11 @@ app.use("/api/users", userRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/categories", categoryRouter);
 
+
+app.use("/", (req, res) => {
+  res.status(200).json("Welcome to Blogarista-API, please refere to the documentation for more information");
+});
+
 app.listen(8000, () => {
   console.log("Backend server is running on port 8000!");
 });
