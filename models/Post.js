@@ -6,23 +6,26 @@ const PostSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      max: 100,
     },
     desc: {
       type: String,
       required: true,
+      max: 500,
     },
     photo: {
       type: String,
       required: false,
     },
-    username: {
-      type: String,
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
-    categories: {
-      type: Array,
-      required: false,
-    },
+    categories:[{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    }],
   },
   { timestamps: true }
 );

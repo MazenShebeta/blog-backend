@@ -5,44 +5,69 @@ class auth {
   // Register
   static async register(req, res) {
     try {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(req.body.password, salt);
-      const user = new User({
-        username: req.body.username,
-        email: req.body.email,
-        password: hashedPassword,
-      });
-      const savedUser = await user.save();
-      res.status(200).json(savedUser);
-    } catch (err) {
-      res.status(500).json(err);
+      let newUser;
+      // create new user
+      if (req.body.image) {
+        newUser = new User({
+          username: req.body.username,
+          email: req.body.email,
+          profilePic: req.body.image,
+          password: req.body.password,
+          gender: req.body.gender,
+        });
+      } else {
+        newUser = new User({
+          username: req.body.username,
+          email: req.body.email,
+          password: req.body.password,
+          gender: req.body.gender,
+        });
+      }
+
+      if (req.body.gender == "male" && !req.body.image) {
+        newUser.profilePic =
+          "https://firebasestorage.googleapis.com/v0/b/art-commerce-e662f.appspot.com/o/artist_male.png?alt=media&token=6adc0394-2e67-4fc7-9a2a-c33418434e1d";
+      } else if (req.body.gender == "female" && !req.body.image) {
+        newUser.profilePic =
+          "https://firebasestorage.googleapis.com/v0/b/art-commerce-e662f.appspot.com/o/artist_female.png?alt=media&token=be3aeef9-a7d8-4491-8f84-810803ec80dc";
+      }
+
+      // save user
+      const user = await newUser.save();
+
+      // generate token
+      const token = await user.generateAuthToken();
+      res.status(201).json({ token });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
     }
   }
 
   // Login
   static async login(req, res) {
     try {
-      const user = await User.findOne({
-        username: req.body.username,
-      });
+      // find user by email
+      const user = await User.findOne({ email: req.body.email });
+
       if (user) {
-        // match passwords
-        const validPassword = await bcrypt.compare(
-          req.body.password,
-          user.password
-        );
-        if (validPassword) {
-          // send user info without password
-          const { password, ...others } = user._doc;
-          res.status(200).json(others);
+        // check password
+        const isMatch = await user.checkPassword(req.body.password);
+
+        if (isMatch) {
+          // generate token
+          const token = await user.generateAuthToken();
+          res.status(200).json({ token });
         } else {
-          !validPassword && res.status(400).json("Wrong password");
+          // if password does not match, throw error
+          throw new Error("Invalid email or password");
         }
       } else {
-        res.status(404).json("User not found");
+        // if user not found, throw error
+        throw new Error("Invalid email or password");
       }
-    } catch (err) {
-      res.status(500).json(err);
+    } catch (error) {
+      // if error occurs, return error message
+      res.status(400).json({ message: error.message });
     }
   }
 }

@@ -3,8 +3,14 @@ const Post = require("../models/Post");
 class posts {
   // Create post
   static async create(req, res) {
-    const newPost = new Post(req.body);
     try {
+      const newPost = new Post({
+        title: req.body.title,
+        desc: req.body.desc,
+        photo: req.body.image,
+        username: req.user._id,
+        categories: req.body.categories,
+      });
       const savedPost = await newPost.save();
       res.status(200).json(savedPost);
     } catch (err) {
@@ -16,7 +22,7 @@ class posts {
   static async update(req, res) {
     try {
       const post = await Post.findById(req.params.id);
-      if (post.username === req.body.username) {
+      if (post.userId === req.user._id) {
         try {
           const updatedPost = await Post.findByIdAndUpdate(
             req.params.id,
@@ -41,15 +47,14 @@ class posts {
   static async delete(req, res) {
     try {
       const post = await Post.findById(req.params.id);
-      if (post.username === req.body.username) {
-        try {
-          await post.delete();
-          res.status(200).json("Post has been deleted");
-        } catch (err) {
-          res.status(500).json(err);
-        }
-      } else {
-        res.status(403).json("You can delete only your post");
+      if (post.userId != req.body.userId && req.user.role != "admin")
+        throw new Error("Not authorized!");
+
+      try {
+        await post.delete();
+        res.status(200).json("Post has been deleted");
+      } catch (err) {
+        res.status(500).json(err);
       }
     } catch (err) {
       res.status(500).json(err);
@@ -68,19 +73,19 @@ class posts {
 
   // Get all posts
   static async getAll(req, res) {
-    const username = req.query.user;
+    const user = req.user;
     const catName = req.query.cat;
     try {
       let posts;
-      if (username) {
-        posts = await Post.find({ username });
-      } else if (catName) {
-        posts = await Post.find({
-          categories: { $in: [catName] },
-        });
-      } else {
-        posts = await Post.find();
-      }
+      // if (user) {
+      //   posts = await Post.find({ userId: user._id });
+      // } else if (catName) {
+      //   posts = await Post.find({
+          // categories: { $in: [catName] }, //fix
+      //   });
+      // } else {
+        posts = await Post.find(catName ? { categories: catName } : {});
+      // }
       res.status(200).json(posts);
     } catch (err) {
       res.status(500).json(err);

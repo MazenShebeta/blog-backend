@@ -1,50 +1,24 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
-const mongoose = require("mongoose");
 const authRouter = require("./routes/authRouter");
 const userRouter = require("./routes/usersRouter");
 const postRouter = require("./routes/postsRouter");
 const categoryRouter = require("./routes/categoriesRouter");
-const multer = require("multer");
 const cors = require("cors");
-const path = require("path");
+const morgan = require("morgan");
+
+// configure morgan
+app.use(morgan("dev"));
+
+require("./configs/dbConnection");
 
 dotenv.config();
 app.use(express.json());
 // enable cors
 app.use(cors());
 
-mongoose
-  .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(console.log("Connected to MongoDB"))
-  .catch((err) => console.log(err));
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "images");
-  },
-  filename: (req, file, cb) => {
-    cb(null, req.body.name);
-  },
-});
-
-const upload = multer({ storage: storage });
-app.post("/api/upload", upload.single("file"), (req, res) => {
-  res.status(200).json("File has been uploaded");
-});
-
-const printNames = (req, res, next) => {
-  // files in image folder
-  const fs = require("fs");
-  const files = fs.readdirSync("./images");
-  console.log(files);
-};
-
-app.use("/images", printNames, express.static(path.join(__dirname, "/images")));
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/posts", postRouter);
@@ -59,5 +33,5 @@ app.use("/", (req, res) => {
 });
 
 app.listen(8000, () => {
-  console.log("Backend server is running on port 8000!");
+  console.log(`Backend server is running on ${process.env.APP_URL}`);
 });
