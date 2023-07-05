@@ -1,19 +1,14 @@
 const router = require("express").Router();
 const User = require("../controllers/usersController");
+const auth = require("../middlewares/auth");
 
-// Update
-router.put("/:id", async (req, res) => {
-  User.update(req, res);
-});
+// Update user
+router.patch("/:id", auth, User.update);
 
-// Delete
-router.delete("/:id", async (req, res) => {
-  User.delete(req, res);
-});
+// Delete user
+router.delete("/:id", auth, User.delete);
 
-// Get a user
-router.get("/:id", async (req, res) => {
-  User.get(req, res);
-});
+// Get user
+router.get("/:id", User.get);
 
 module.exports = router;

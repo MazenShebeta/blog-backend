@@ -2,28 +2,18 @@ const router = require("express").Router();
 const Post = require("../controllers/postsController");
 
 // Create post
-router.post("/", async (req, res) => {
-  Post.create(req, res);
-});
+router.post("/", Post.create);
 
 // Update post
-router.put("/:id", async (req, res) => {
-  Post.update(req, res);
-});
+router.put("/:id", Post.update);
 
 // Delete post
-router.delete("/:id", async (req, res) => {
-  Post.delete(req, res);
-});
+router.delete("/:id", Post.delete);
 
 // Get post
-router.get("/:id", async (req, res) => {
-  Post.get(req, res);
-});
+router.get("/:id", Post.get);
 
 // Get all posts
-router.get("/", async (req, res) => {
-  Post.getAll(req, res);
-});
+router.get("/", Post.getAll);
 
 module.exports = router;
