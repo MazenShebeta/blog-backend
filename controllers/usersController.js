@@ -4,27 +4,20 @@ const bcrypt = require("bcrypt");
 class users {
   //  update
   static async update(req, res) {
-    if (req.body.userID === req.params.id) {
-      console.log(req.body)
-      if (req.body.password) {
-        const salt = await bcrypt.genSalt(10);
-        req.body.password = await bcrypt.hash(req.body.password, salt);
+    try{
+      const updatedUser = await User.findById(req.params.id)
+      if(!updatedUser){
+        res.status(404).json("User not found")
       }
-      try {
-        const updatedUser = await User.findByIdAndUpdate(
-          req.body.userID,
-          {
-            $set: req.body,
-          },
-          { new: true }
-        );
-        console.log(updatedUser);
-        res.status(200).json(updatedUser);
-      } catch (err) {
-        res.status(500).json(err);
+      if(req.user._id != req.params.id){
+        res.status(403).json("You can only update your account")
       }
-    } else {
-      res.status(403).json("You can update only your account");
+      updatedUser.set(req.body)
+      await updatedUser.save();
+      res.status(200).json({message:"updated succefully", updatedUser})
+    }
+    catch(error){
+      res.status(400).json(error)
     }
   }
 

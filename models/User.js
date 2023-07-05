@@ -18,11 +18,6 @@ const UserSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
-      validate(value) {
-        if (!validator.isEmail(value)) {
-          throw new Error("Invalid Email");
-        }
-      },
     },
 
     password: {
@@ -30,12 +25,6 @@ const UserSchema = new mongoose.Schema(
       required: [true],
       trim: true,
       minlength: 8,
-      validate(value) {
-        const name = this.name;
-        if (value.toLowerCase().includes("password")) {
-          throw new Error('Password cannot contain "password"');
-        }
-      },
     },
 
     gender:{
