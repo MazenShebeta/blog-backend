@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const Comment = require("../models/Comment");
 
 class posts {
   // Create post
@@ -8,11 +9,11 @@ class posts {
         title: req.body.title,
         desc: req.body.desc,
         photo: req.body.image,
-        username: req.user._id,
+        user: req.user._id,
         categories: req.body.categories,
       });
-      const savedPost = await newPost.save();
-      res.status(200).json(savedPost);
+      await newPost.save();
+      res.status(200).json({ message: "Post created successfully", newPost });
     } catch (err) {
       res.status(500).json(err);
     }
@@ -22,22 +23,12 @@ class posts {
   static async update(req, res) {
     try {
       const post = await Post.findById(req.params.id);
-      if (post.userId === req.user._id) {
-        try {
-          const updatedPost = await Post.findByIdAndUpdate(
-            req.params.id,
-            {
-              $set: req.body,
-            },
-            { new: true }
-          );
-          res.status(200).json(updatedPost);
-        } catch (err) {
-          res.status(500).json(err);
-        }
-      } else {
+      if (post.user !== req.user._id) {
         res.status(403).json("You can update only your post");
       }
+      post.update(req.body);
+      await post.save();
+      res.status(200).json({ message: "Post has been updated", post });
     } catch (err) {
       res.status(500).json(err);
     }
@@ -47,7 +38,7 @@ class posts {
   static async delete(req, res) {
     try {
       const post = await Post.findById(req.params.id);
-      if (post.userId != req.body.userId && req.user.role != "admin")
+      if (post.user != req.user._id && req.user.role != "admin")
         throw new Error("Not authorized!");
 
       try {
@@ -65,26 +56,26 @@ class posts {
   static async get(req, res) {
     try {
       const post = await Post.findById(req.params.id);
-      res.status(200).json(post);
+      const comments = await Comment.find({ post: req.params.id });
+      post.comments = comments;
+      res.status(200).json({post});
     } catch (err) {
-      res.status(500).json(err);
+      res.status(500).json(err.message);
     }
   }
 
   // Get all posts
   static async getAll(req, res) {
-    const user = req.user;
-    const catName = req.query.cat;
     try {
-      let posts;
+      let query = req.query;
+      const posts = await Post.find({ query });
       // if (user) {
       //   posts = await Post.find({ userId: user._id });
       // } else if (catName) {
       //   posts = await Post.find({
-          // categories: { $in: [catName] }, //fix
+      // categories: { $in: [catName] }, //fix
       //   });
       // } else {
-        posts = await Post.find(catName ? { categories: catName } : {});
       // }
       res.status(200).json(posts);
     } catch (err) {

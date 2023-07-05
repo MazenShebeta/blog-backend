@@ -17,15 +17,21 @@ const PostSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    userId: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    categories:[{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-    }],
+    edited: {
+      type: Boolean,
+      default: false,
+    },
+    categories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+      },
+    ],
   },
   { timestamps: true }
 );
