@@ -61,9 +61,35 @@ const UserSchema = new mongoose.Schema(
         },
       },
     ],
+    emailVerificationCode: {
+      type: String,
+    },
+    passwordVerificationCode: {
+      type: String,
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
+
+UserSchema.methods.generateVerificationToken = async function () {
+  const verificationToken = jwt.sign(
+    { _id: this._id.toString() },
+    process.env.JWT_SECRET
+  );
+  return verificationToken;
+};
+
+UserSchema.methods.generatePasswordReset = async function () {
+  const passwordResetToken = jwt.sign(
+    { _id: this._id.toString() },
+    process.env.JWT_SECRET
+  );
+  return passwordResetToken;
+};
 
 UserSchema.methods.checkPassword = async function (password) {
   // Check if password matches
