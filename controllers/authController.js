@@ -1,6 +1,7 @@
 const userModel = require("../models/User");
 const emailController = require("./emailController");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 class auth {
   // Register
@@ -69,7 +70,7 @@ class auth {
         throw new Error("Invalid email or password");
       }
 
-      if (!user.isVerified) {
+      if (!user.verified) {
         const verificationToken = await user.generateVerificationToken();
         user.emailVerificationCode = verificationToken;
 
@@ -85,7 +86,13 @@ class auth {
       } else {
         // generate token
         const token = await user.generateAuthToken();
-        res.status(200).json({ token });
+        const userData = {
+          username: user.username,
+          email: user.email,
+          image: user.profilePic,
+          role: user.role,
+        };
+        res.status(200).json({ token, userData });
       }
     } catch (error) {
       // if error occurs, return error message

@@ -9,14 +9,11 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage }).single("file");
 
 
-// Register
 router.post("/register", upload, dataController.uploadFile,  authController.register);
-
-// Login
 router.post("/login", authController.login);
+router.delete("/logout", auth, authController.logout);
 
 router.post("/verify/:token", authController.verifyEmail);
-router.delete("/logout", auth, authController.logout);
 router.post("/forgot", authController.forgotPassword);
 router.patch("/reset/:token", authController.resetPassword);
 
