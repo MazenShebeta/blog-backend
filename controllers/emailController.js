@@ -310,7 +310,7 @@ class Email {
     const mailOptions = {
       from: process.env.MAILER_EMAIL,
       to: Email,
-      subject: "Verona Email Verification",
+      subject: "Blogarista Email Verification",
       html: html,
     };
     transporter.sendMail(mailOptions, function (err, info) {
@@ -629,7 +629,7 @@ class Email {
     const mailOptions = {
       from: process.env.MAILER_EMAIL,
       to: Email,
-      subject: "Verona Password Reset",
+      subject: "Blogarista Password Reset",
       html: html,
     };
     transporter.sendMail(mailOptions, function (err, info) {
