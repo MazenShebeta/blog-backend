@@ -60,14 +60,14 @@ class auth {
       const user = await userModel.findOne({ email: req.body.email });
 
       if (!user) {
-        throw new Error("Invalid email or password");
+        res.status(404).json("User not found");
       }
 
       // check password
       const isMatch = await user.checkPassword(req.body.password);
 
       if (!isMatch) {
-        throw new Error("Invalid email or password");
+        res.status(401).json("Invalid Password");
       }
 
       if (!user.verified) {
