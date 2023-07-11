@@ -87,6 +87,7 @@ class auth {
         // generate token
         const token = await user.generateAuthToken();
         const userData = {
+          id: user._id,
           username: user.username,
           email: user.email,
           image: user.profilePic,
