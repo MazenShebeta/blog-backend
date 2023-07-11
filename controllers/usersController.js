@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Post = require("../models/Post");
 const bcrypt = require("bcrypt");
 
 class users {
@@ -43,13 +44,11 @@ class users {
   // Get user
   static async get(req, res) {
     try {
-      const user = await User.findById(req.params.id);
-      if (user) {
-        const { password, ...others } = user._doc;
-        res.status(200).json(others);
-      } else {
-        res.status(404).json("User not found");
-      }
+      const user = await User.findOne({username: req.params.id}).select("_id username email gender role profilePic");
+      if(!user)
+        return res.status(404).json("User not found")
+      const posts = await Post.find({user: user._id})
+      res.status(200).json({user, posts});
     } catch (err) {
       res.status(500).json(err);
     }

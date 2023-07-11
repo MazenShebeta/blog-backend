@@ -9,6 +9,6 @@ router.patch("/:id", auth, User.update);
 router.delete("/:id", auth, User.delete);
 
 // Get user
-router.get("/:id", User.get);
+router.get("/:username", User.get);
 
 module.exports = router;
