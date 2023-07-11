@@ -44,7 +44,7 @@ class users {
   // Get user
   static async get(req, res) {
     try {
-      const user = await User.findOne({username: req.params.id}).select("_id username email gender role profilePic");
+      const user = await User.findOne({username: req.params.username}).select("_id username email gender role profilePic");
       if(!user)
         return res.status(404).json("User not found")
       const posts = await Post.find({user: user._id})
