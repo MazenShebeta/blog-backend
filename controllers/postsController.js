@@ -15,7 +15,7 @@ class posts {
       await newPost.save();
       res.status(200).json({ message: "Post created successfully", newPost });
     } catch (err) {
-      res.status(500).json(err);
+      res.status(400).json(err);
     }
   }
 
@@ -30,7 +30,7 @@ class posts {
       await post.save();
       res.status(200).json({ message: "Post has been updated", post });
     } catch (err) {
-      res.status(500).json(err);
+      res.status(400).json(err);
     }
   }
 
@@ -45,22 +45,23 @@ class posts {
         await post.delete();
         res.status(200).json("Post has been deleted");
       } catch (err) {
-        res.status(500).json(err);
+        res.status(400).json(err);
       }
     } catch (err) {
-      res.status(500).json(err);
+      res.status(400).json(err);
     }
   }
 
   // Get post
   static async get(req, res) {
     try {
-      const post = await Post.findById(req.params.id);
+      const post = await Post.findById(req.params.id).populate("user", "username").populate("categories", "name");
+      if(!post) res.status(404).json({message: "Post not found"})
       const comments = await Comment.find({ post: req.params.id });
       post.comments = comments;
       res.status(200).json({post});
     } catch (err) {
-      res.status(500).json(err.message);
+      res.status(400).json(err.message);
     }
   }
 
@@ -79,7 +80,7 @@ class posts {
       // }
       res.status(200).json(posts);
     } catch (err) {
-      res.status(500).json(err);
+      res.status(400).json(err);
     }
   }
 }

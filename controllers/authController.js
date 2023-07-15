@@ -82,7 +82,7 @@ class auth {
           verificationToken,
           savedUser.email
         );
-        res.status(200).json("Verification email has been re-sent");
+        res.status(300).json("Verification email has been re-sent");
       } else {
         // generate token
         const token = await user.generateAuthToken();
@@ -107,7 +107,7 @@ class auth {
       const email = req.body.email;
       const user = await userModel.findOne({ email });
       if (!user) {
-        throw new Error("Email not found!");
+        res.status(404).json("Email not found!");
       }
       const passwordToken = await user.generatePasswordReset();
       await emailController.sendForgotPasswordEmail(passwordToken, email);
@@ -126,7 +126,7 @@ class auth {
         passwordVerificationCode: req.params.token,
       });
       if (!user) {
-        throw new Error("Invalid token!");
+        res.status(401).json("Invalid token!");
       }
       user.password = req.body.password;
       user.passwordVerificationCode = null;
@@ -158,13 +158,13 @@ class auth {
       const user = await userModel.findById(id);
 
       if (!user) {
-        throw new Error("User not found!");
+        res.status(404).json("User not found!");
       }
       if (user.verified === true) {
-        throw new Error("User already verified!");
+        res.status(401).json("User already verified!");
       }
       if (user.emailVerificationCode != token) {
-        throw new Error("Invalid token!");
+        res.status(401).json("Invalid token!");
       }
       user.verified = true;
       await user.save();

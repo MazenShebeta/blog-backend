@@ -23,7 +23,7 @@ class categories {
       await category.save();
       res.status(200).json({ message: "Category has been updated", category });
     } catch (err) {
-      res.status(500).json(err);
+      res.status(400).json(err);
     }
   }
 
@@ -34,7 +34,7 @@ class categories {
       await category.delete();
       res.status(200).json("Category has been deleted");
     } catch (err) {
-      res.status(500).json(err);
+      res.status(400).json(err);
     }
   }
 

@@ -37,7 +37,7 @@ class users {
         res.status(403).json("You can delete only your account");
       }
     } catch (err) {
-      res.status(500).json(err);
+      res.status(400).json(err);
     }
   }
 
@@ -50,7 +50,7 @@ class users {
       const posts = await Post.find({user: user._id})
       res.status(200).json({user, posts});
     } catch (err) {
-      res.status(500).json(err);
+      res.status(400).json(err);
     }
   }
 }
