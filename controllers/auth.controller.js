@@ -60,14 +60,14 @@ class auth {
       const user = await userModel.findOne({ email: req.body.email });
 
       if (!user) {
-        res.status(404).json("User not found");
+        res.status(404).json({message: "User not found"});
       }
 
       // check password
       const isMatch = await user.checkPassword(req.body.password);
 
       if (!isMatch) {
-        res.status(401).json("Invalid Password");
+        res.status(401).json({message: "Invalid Password"});
       }
 
       if (!user.verified) {
@@ -82,7 +82,7 @@ class auth {
           verificationToken,
           savedUser.email
         );
-        res.status(200).json("Verification email has been re-sent");
+        res.status(300).json({message: "Verification email has been re-sent"});
       } else {
         // generate token
         const token = await user.generateAuthToken();
@@ -107,13 +107,13 @@ class auth {
       const email = req.body.email;
       const user = await userModel.findOne({ email });
       if (!user) {
-        throw new Error("Email not found!");
+        res.status(404).json({message: "Email not found!"});
       }
       const passwordToken = await user.generatePasswordReset();
       await emailController.sendForgotPasswordEmail(passwordToken, email);
       user.passwordVerificationCode = passwordToken;
       await user.save();
-      res.status(200).json("Password reset email has been sent");
+      res.status(200).json({message: "Password reset email has been sent"});
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
@@ -126,13 +126,13 @@ class auth {
         passwordVerificationCode: req.params.token,
       });
       if (!user) {
-        throw new Error("Invalid token!");
+        res.status(401).json({message: "Invalid token!"});
       }
       user.password = req.body.password;
       user.passwordVerificationCode = null;
       user.tokens = []
       await user.save();
-      res.status(200).json("Password reset successfuly");
+      res.status(200).json({message: "Password reset successfuly"});
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
@@ -145,7 +145,7 @@ class auth {
       //delete token from database
       const user = req.user;
       await user.deleteTokenFromDatabase(req.user, token);
-      res.status(200).json("logged out successfully");
+      res.status(200).json({message: "logged out successfully"});
     } catch (err) {
       res.status(400).json({ error: err.message });
     }
@@ -159,19 +159,19 @@ class auth {
       const user = await userModel.findById(id);
 
       if (!user) {
-        throw new Error("User not found!");
+        res.status(404).json({message: "User not found!"});
       }
       if (user.verified === true) {
-        throw new Error("User already verified!");
+        res.status(401).json({message: "User already verified!"});
       }
       if (user.emailVerificationCode != token) {
-        throw new Error("Invalid token!");
+        res.status(401).json({message: "Invalid token!"});
       }
       user.verified = true;
       await user.save();
-      res.status(200).json("User verified successfully");
+      res.status(200).json({message: "User verified successfully"});
     } catch (error) {
-      res.status(400).json(error.message);
+      res.status(400).json({message: error.message});
     }
   }
 

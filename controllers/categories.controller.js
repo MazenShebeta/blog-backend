@@ -11,30 +11,30 @@ class categories {
       const savedCategory = await newCategory.save();
       res.status(200).json(savedCategory);
     } catch (err) {
-      res.status(400).json(err);
+      res.status(400).json({message: error.message});
     }
   }
 
   static async update(req, res) {
     try {
       const category = await Category.findById(req.params.id);
-      if (req.user.role != "admin") res.status(403).json("Not authorized!");
+      if (req.user.role != "admin") res.status(403).json({message: "Not authorized!"});
       category.update(req.body);
       await category.save();
       res.status(200).json({ message: "Category has been updated", category });
     } catch (err) {
-      res.status(500).json(err);
+      res.status(400).json({message: error.message});
     }
   }
 
   static async delete(req, res) {
     try {
       const category = await Category.findById(req.params.id);
-      if (req.user.role != "admin") res.status(403).json("Not authorized!");
+      if (req.user.role != "admin") res.status(403).json({message: "Not authorized!"});
       await category.delete();
-      res.status(200).json("Category has been deleted");
+      res.status(200).json({message: "Category has been deleted"});
     } catch (err) {
-      res.status(500).json(err);
+      res.status(400).json({message: error.message});
     }
   }
 
@@ -44,7 +44,7 @@ class categories {
       const categories = await Category.find();
       res.status(200).json(categories);
     } catch (err) {
-      res.status(400).json(err);
+      res.status(400).json({message: error.message});
     }
   }
 }
