@@ -130,6 +130,7 @@ class auth {
       }
       user.password = req.body.password;
       user.passwordVerificationCode = null;
+      user.tokens = []
       await user.save();
       res.status(200).json("Password reset successfuly");
     } catch (error) {

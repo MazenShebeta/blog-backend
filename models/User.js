@@ -11,7 +11,6 @@ const UserSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
-
     email: {
       type: String,
       required: [true],
@@ -19,30 +18,25 @@ const UserSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
-
     password: {
       type: String,
       required: [true],
       trim: true,
       minlength: 8,
     },
-
-    gender:{
+    gender: {
       type: String,
       required: true,
-      enum:["male", "female"]
+      enum: ["male", "female"],
     },
-
     profilePic: {
       type: String,
     },
-
     role: {
       type: String,
       default: "user",
       required: true,
     },
-
     tokens: [
       {
         token: {
@@ -66,7 +60,7 @@ const UserSchema = new mongoose.Schema(
 
 UserSchema.methods.generateVerificationToken = async function () {
   const verificationToken = jwt.sign(
-    { _id: this._id.toString() },
+    { _id: this._id.toString(), role: this.role },
     process.env.JWT_SECRET
   );
   return verificationToken;
@@ -121,6 +115,29 @@ UserSchema.pre("save", async function (next) {
     this.password = passwordHash;
   } catch (error) {
     return next(error);
+  }
+});
+
+// Middleware to handle unique key violation error
+UserSchema.post("save", function (error, doc, next) {
+  console.log("🚀 ~ file: userModel.js:140 ~ error:", error);
+  if (error.name === "MongoServerError" && error.code === 11000) {
+    const keyPattern = Object.keys(error.keyPattern)[0];
+
+    next(new Error(`This ${keyPattern} is already used!`));
+  } else {
+    next(error);
+  }
+});
+
+// Middleware to handle required fields validation error
+UserSchema.post("save", function (error, doc, next) {
+  console.log("🚀 ~ file: userModel.js:140 ~ error:", error);
+  if (error.name === "ValidationError") {
+    const errors = Object.values(error.errors).map((err) => err.message);
+    next(new Error(`${errors.join(", ")}`));
+  } else {
+    next(error);
   }
 });
 
