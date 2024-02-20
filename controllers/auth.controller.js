@@ -1,5 +1,5 @@
-const userModel = require("../models/User");
-const emailController = require("./emailController");
+const userModel = require("../models/user.model");
+const emailController = require("./email.controller");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 

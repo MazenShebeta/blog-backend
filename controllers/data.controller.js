@@ -4,7 +4,7 @@ class data {
     static async uploadFile(req, res, next) {
       try {
         const { ref, uploadBytes, getDownloadURL } = require("firebase/storage");
-        const storage = require("../configs/firebaseConnection");
+        const storage = require("../configs/firebase.connection");
         // Grab the file
         const file = req.file;
         if (file) {
@@ -32,7 +32,7 @@ class data {
     static async uploadAndRespond(req, res) {
       try {
         const { ref, uploadBytes, getDownloadURL } = require("firebase/storage");
-        const storage = require("../configs/firebaseConnection");
+        const storage = require("../configs/firebase.connection");
         // Grab the file
         const file = req.file;
         if (file) {
@@ -62,7 +62,7 @@ class data {
     static async uploadMultipleFiles(req, res, next) {
       try {
         const { ref, uploadBytes, getDownloadURL } = require("firebase/storage");
-        const storage = require("../configs/firebaseConnection");
+        const storage = require("../configs/firebase.connection");
   
         const files = req.files; // Get the files from the request object
   

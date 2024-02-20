@@ -1,9 +1,9 @@
 const router = require("express").Router();
-const authController = require("../controllers/authController");
-const auth = require("../middlewares/auth")
+const authController = require("../controllers/auth.controller.js");
+const auth = require("../middlewares/auth.js")
 
 const multer = require("multer");
-const dataController = require("../controllers/dataController.js");
+const dataController = require("../controllers/data.controller.js");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage }).single("file");

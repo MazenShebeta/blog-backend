@@ -1,17 +1,17 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
-const authRouter = require("./routes/authRouter");
-const userRouter = require("./routes/usersRouter");
-const postRouter = require("./routes/postsRouter");
-const categoryRouter = require("./routes/categoriesRouter");
+const authRouter = require("./routes/auth.router");
+const userRouter = require("./routes/users.router");
+const postRouter = require("./routes/posts.router");
+const categoryRouter = require("./routes/categories.router");
 const cors = require("cors");
 const morgan = require("morgan");
 
 // configure morgan
 app.use(morgan("dev"));
 
-require("./configs/dbConnection");
+require("./configs/db.connection");
 
 dotenv.config();
 app.use(express.json());
