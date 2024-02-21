@@ -8,7 +8,7 @@ class auth {
   static async register(req, res) {
     try {
       // Create a new user based on the request body
-      let newUser = new userModel({
+      const user = new userModel({
         username: req.body.username,
         email: req.body.email,
         password: req.body.password,
@@ -17,24 +17,24 @@ class auth {
 
       // Set the profile picture if provided in the request body
       if (req.body.image) {
-        newUser.profilePic = req.body.image;
+        user.image = req.body.image;
       } else {
         // Set the default profile picture based on the user's gender if not provided
         if (req.body.gender === "male") {
-          newUser.profilePic =
+          user.image =
             "https://firebasestorage.googleapis.com/v0/b/art-commerce-e662f.appspot.com/o/artist_male.png?alt=media&token=6adc0394-2e67-4fc7-9a2a-c33418434e1d";
         } else if (req.body.gender === "female") {
-          newUser.profilePic =
+          user.image =
             "https://firebasestorage.googleapis.com/v0/b/art-commerce-e662f.appspot.com/o/artist_female.png?alt=media&token=be3aeef9-a7d8-4491-8f84-810803ec80dc";
         }
       }
 
       // Generate a verification token and set it for the user
-      const verificationToken = await newUser.generateVerificationToken();
-      newUser.emailVerificationCode = verificationToken;
+      const verificationToken = await user.generateVerificationToken();
+      user.emailVerificationCode = verificationToken;
 
       // Save the user to the database
-      const savedUser = await newUser.save();
+      const savedUser = await user.save();
 
       // Send a verification email to the user's email address
       const emailResponse = await emailController.sendVerificationMail(
@@ -90,7 +90,7 @@ class auth {
           id: user._id,
           username: user.username,
           email: user.email,
-          image: user.profilePic,
+          image: user.image,
           role: user.role,
         };
         res.status(200).json({ token, userData });

@@ -8,7 +8,7 @@ class posts {
       const newPost = new Post({
         title: req.body.title,
         desc: req.body.desc,
-        photo: req.body.image,
+        image: req.body.image,
         user: req.user._id,
         categories: req.body.categories,
       });

@@ -12,7 +12,7 @@ const PostSchema = new mongoose.Schema(
       required: true,
       max: 500,
     },
-    photo: {
+    image: {
       type: String,
       required: false,
     },
