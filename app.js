@@ -7,16 +7,18 @@ const postRouter = require("./routes/posts.router");
 const categoryRouter = require("./routes/categories.router");
 const cors = require("cors");
 const morgan = require("morgan");
+require("colors")
+require("pretty-error").start();
 
 // configure morgan
 app.use(morgan("dev"));
 
-require("./configs/db.connection");
 
 dotenv.config();
 app.use(express.json());
 // enable cors
 app.use(cors());
+require("./configs/db.connection");
 
 
 app.use("/api/auth", authRouter);
@@ -31,7 +33,7 @@ app.use("/", (req, res) => {
       "Welcome to Blogarista-API, please refere to the documentation for more information"
     );
 });
-
-app.listen(8000, () => {
-  console.log(`Backend server is running on ${process.env.APP_URL}`);
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`Backend server is running on ${PORT}`);
 });

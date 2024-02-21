@@ -1,13 +1,12 @@
+require("dotenv");
 const mongoose = require("mongoose");
 
 // Retrieve the DB_CONNECTION variable from the environment
-const dbConnString = 'mongodb+srv://MazenShebeta:RCW8ANthQLEPmc4e@blog.mzhekcf.mongodb.net/?retryWrites=true&w=majority';
-console.log("🚀 ~ dbConnString:", dbConnString)
+const dbConnString = process.env.DB_CONNECTION;
 
+mongoose.set("strictQuery", false);
 // Connect to the MongoDB database using mongoose
-mongoose.set('strictQuery', false);
 mongoose.connect(dbConnString);
-mongoose.set('strictQuery', false);
 
 // Check if the connection was successful
 const db = mongoose.connection;
